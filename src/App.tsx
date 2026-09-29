@@ -1,10 +1,20 @@
+import { AppLayout } from './components/layout/AppLayout'
+import { useHashRoute } from './hooks/useHashRoute'
+import { DashboardPage } from './pages/DashboardPage'
+import { NotesPage } from './pages/NotesPage'
+import { TasksPage } from './pages/TasksPage'
+import { TimerPage } from './pages/TimerPage'
+
 function App() {
+  const route = useHashRoute()
+
   return (
-    <main className="app">
-      <h1>Kay To-Do</h1>
-      <p>Your tasks, notes and timer — all in one place.</p>
-      <p className="status">Phase 1: the project is set up and running.</p>
-    </main>
+    <AppLayout route={route}>
+      {route === 'dashboard' && <DashboardPage />}
+      {route === 'tasks' && <TasksPage />}
+      {route === 'notes' && <NotesPage />}
+      {route === 'timer' && <TimerPage />}
+    </AppLayout>
   )
 }
 
