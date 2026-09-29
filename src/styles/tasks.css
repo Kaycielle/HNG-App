@@ -1,0 +1,307 @@
+/* ---------- Task form ---------- */
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.task-form-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.task-form-row .input {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-form-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+}
+
+.field-wide {
+  grid-column: 1 / -1;
+}
+
+.optional {
+  font-weight: 400;
+  color: var(--color-text-subtle);
+}
+
+.task-form-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.task-form-footer .btn-ghost {
+  margin-left: calc(var(--space-3) * -1);
+  color: var(--color-text-muted);
+}
+
+.task-form-hint {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.task-form-footer > .btn:last-child:not(.btn-ghost) {
+  margin-left: auto;
+}
+
+/* ---------- Filters ---------- */
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: var(--space-5) 0 var(--space-3);
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.25rem;
+  padding: 0 var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  color: var(--color-text);
+}
+
+.filter-btn[aria-pressed='true'] {
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-count {
+  min-width: 1.4rem;
+  padding: 0 var(--space-1);
+  border-radius: 999px;
+  background: var(--color-border);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Task list ---------- */
+
+.task-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.task-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.task-item:last-child {
+  border-bottom: none;
+}
+
+.task-item.is-editing {
+  display: block;
+  padding: var(--space-4) var(--space-3);
+  margin: var(--space-2) 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+}
+
+.task-item.is-dragging {
+  opacity: 0.4;
+}
+
+/* The blue line showing where a dragged task will land. */
+.task-item.drop-before::before,
+.task-item.drop-after::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-accent);
+}
+
+.task-item.drop-before::before {
+  top: -2px;
+}
+
+.task-item.drop-after::after {
+  bottom: -2px;
+}
+
+.drag-handle {
+  display: flex;
+  align-self: center;
+  color: var(--color-border-strong);
+  cursor: grab;
+}
+
+.task-item:hover .drag-handle {
+  color: var(--color-text-subtle);
+}
+
+.task-check {
+  flex-shrink: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: 0.15rem 0 0;
+  accent-color: var(--color-success);
+  cursor: pointer;
+}
+
+.task-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-title {
+  display: block;
+  font-weight: 550;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.task-description {
+  margin-top: 2px;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.task-created {
+  font-size: 0.78rem;
+  color: var(--color-text-subtle);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  font-size: 0.78rem;
+  font-weight: 550;
+  line-height: 1.4rem;
+  color: var(--color-text-muted);
+}
+
+.chip-due-overdue {
+  border-color: #f5c2bd;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.chip-due-today {
+  border-color: #c7d5f7;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.chip-priority-high {
+  border-color: #f5c2bd;
+  color: var(--color-danger);
+}
+
+.chip-priority-medium {
+  border-color: #f3dca6;
+  color: var(--color-warning);
+}
+
+.task-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+/* Completed tasks: muted with the title struck through. */
+.task-item.is-completed .task-title {
+  color: var(--color-text-subtle);
+  text-decoration: line-through;
+  font-weight: 450;
+}
+
+.task-item.is-completed .task-description,
+.task-item.is-completed .chip {
+  opacity: 0.7;
+}
+
+/* On devices with a mouse, only show secondary actions on hover/focus to reduce clutter. */
+@media (hover: hover) and (pointer: fine) {
+  .task-item .task-actions {
+    opacity: 0.35;
+    transition: opacity 0.15s;
+  }
+
+  .task-item:hover .task-actions,
+  .task-item:focus-within .task-actions {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .drag-handle {
+    display: none;
+  }
+
+  .task-item {
+    flex-wrap: wrap;
+  }
+
+  .task-actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: calc(var(--space-1) * -1);
+  }
+
+  .task-form-details {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .filter-btn {
+    justify-content: space-between;
+  }
+}

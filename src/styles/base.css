@@ -331,6 +331,59 @@ select {
   color: var(--color-success);
 }
 
+/* ---------- Toast (used across the app) ---------- */
+
+.toast-region {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-5);
+  z-index: 200;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-text);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  font-size: 0.925rem;
+}
+
+.toast-action {
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: #9db8ff;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.toast-action:hover {
+  background: rgb(255 255 255 / 0.1);
+}
+
+.toast .toast-close {
+  color: #c3c8cf;
+}
+
+.toast .toast-close:hover {
+  background: rgb(255 255 255 / 0.1);
+  color: #fff;
+}
+
+@media (max-width: 760px) {
+  .toast-region {
+    bottom: 5rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -338,4 +391,14 @@ select {
     transition: none !important;
     animation: none !important;
   }
+}
+
+@media (max-width: 760px) {
+  .card {
+    padding: var(--space-4);
+  }
+}
+
+.storage-notice {
+  margin-bottom: var(--space-4);
 }
