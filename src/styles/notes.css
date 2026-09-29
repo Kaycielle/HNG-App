@@ -1,0 +1,210 @@
+/* Two panes on wide screens: list on the left, editor on the right. */
+.notes-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  min-height: 520px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.note-list-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.note-search {
+  position: relative;
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.note-search .input {
+  padding-left: 2.1rem;
+}
+
+.note-search-icon {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-subtle);
+  pointer-events: none;
+}
+
+.note-search-status {
+  padding: var(--space-2) var(--space-4) 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.note-list {
+  flex: 1;
+  margin: 0;
+  padding: var(--space-2);
+  list-style: none;
+  overflow-y: auto;
+  max-height: 640px;
+}
+
+.note-list-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.note-list-item:hover {
+  background: var(--color-surface-muted);
+}
+
+.note-list-item[aria-current='true'] {
+  background: var(--color-accent-soft);
+  border-color: #c7d5f7;
+}
+
+.note-list-title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note-list-title.is-untitled {
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.note-list-preview {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note-list-date {
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+}
+
+.note-editor-pane {
+  display: flex;
+  min-width: 0;
+}
+
+.note-editor-empty {
+  margin: auto;
+}
+
+.note-editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--space-4) var(--space-6) var(--space-6);
+}
+
+.note-editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.note-back {
+  display: none;
+  margin-left: calc(var(--space-3) * -1);
+}
+
+.note-save-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: auto;
+  font-size: 0.8rem;
+  color: var(--color-success);
+}
+
+.note-save-status.is-error {
+  color: var(--color-danger);
+}
+
+.note-title-input {
+  width: 100%;
+  padding: var(--space-1) 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  font-size: 1.5rem;
+  font-weight: 650;
+}
+
+.note-title-input:focus-visible,
+.note-body-input:focus-visible {
+  outline: none;
+  box-shadow: 0 2px 0 var(--color-accent-soft);
+}
+
+.note-hint {
+  font-size: 0.85rem;
+  color: var(--color-warning);
+}
+
+.note-meta {
+  margin: var(--space-1) 0 var(--space-4);
+  font-size: 0.8rem;
+  color: var(--color-text-subtle);
+}
+
+.note-body-input {
+  flex: 1;
+  width: 100%;
+  min-height: 320px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  line-height: 1.65;
+  resize: none;
+}
+
+/* Narrow screens: show either the list or the open note, with a Back button. */
+@media (max-width: 760px) {
+  .notes-layout {
+    display: block;
+    min-height: 0;
+  }
+
+  .note-list-pane {
+    border-right: none;
+  }
+
+  .note-list {
+    max-height: none;
+  }
+
+  .notes-layout:not(.has-selection) .note-editor-pane,
+  .notes-layout.has-selection .note-list-pane {
+    display: none;
+  }
+
+  .note-editor {
+    padding: var(--space-3) var(--space-4) var(--space-5);
+  }
+
+  .note-back {
+    display: inline-flex;
+  }
+
+  .note-save-status {
+    margin-left: auto;
+    margin-right: 0;
+  }
+}
