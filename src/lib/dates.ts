@@ -51,6 +51,11 @@ export function describeDueDate(dueDate: string, today: string): { label: string
   return { label: formatted, tone: 'later' }
 }
 
+/** "Tuesday, September 29" for a "YYYY-MM-DD" key. */
+export function formatLongDate(key: string): string {
+  return parseDateKey(key).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })
+}
+
 /** Short date for a timestamp, e.g. "Sep 29" or "Sep 29, 2025". */
 export function formatShortDate(iso: string): string {
   const date = new Date(iso)

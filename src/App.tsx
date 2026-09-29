@@ -69,7 +69,16 @@ function App() {
         onCompleteTask={(task) => tasks.setCompleted(task.id, true)}
       />
 
-      {route === 'dashboard' && <DashboardPage />}
+      {route === 'dashboard' && (
+        <DashboardPage
+          tasks={tasks}
+          notes={notes}
+          timer={timer}
+          timerTask={timerTask}
+          today={today}
+          onStartTimer={startTimerForTask}
+        />
+      )}
       {route === 'tasks' && <TasksPage api={tasks} today={today} onStartTimer={startTimerForTask} />}
       {route === 'notes' && <NotesPage api={notes} />}
       {route === 'timer' && <TimerPage timer={timer} activeTasks={activeTasks} task={timerTask} />}

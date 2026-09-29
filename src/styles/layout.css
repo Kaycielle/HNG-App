@@ -147,13 +147,16 @@
     background: transparent;
   }
 
+  /* No room for a separate badge: the countdown replaces the "Timer" label. */
   .nav-badge {
-    position: absolute;
-    top: 2px;
-    left: 50%;
-    margin-left: 6px;
-    font-size: 0.65rem;
+    margin: 0;
+    padding: 0 6px;
+    font-size: 0.7rem;
     line-height: 1.1rem;
+  }
+
+  .nav-link:has(.nav-badge) .nav-label {
+    display: none;
   }
 
   .main {
