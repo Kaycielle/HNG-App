@@ -258,9 +258,15 @@
   font-weight: 450;
 }
 
-.task-item.is-completed .task-description,
+.task-item.is-completed .task-description {
+  color: var(--color-text-subtle);
+}
+
+/* Completed tasks' labels turn plain grey (not transparent, so they stay readable). */
 .task-item.is-completed .chip {
-  opacity: 0.7;
+  border-color: var(--color-border);
+  background: transparent;
+  color: var(--color-text-subtle);
 }
 
 /* On devices with a mouse, only show secondary actions on hover/focus to reduce clutter. */

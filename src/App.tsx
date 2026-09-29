@@ -46,6 +46,11 @@ function App() {
   const activeTasks = tasks.tasks.filter((t) => !t.completed)
   const timerIsActive = timer.status === 'running' || timer.status === 'paused'
 
+  // Each page starts at the top, like a normal website.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [route])
+
   // Show the countdown in the browser tab title so it's visible from other tabs.
   useEffect(() => {
     if (timer.status === 'running') document.title = `${formatClock(timer.remainingMs)} · ${APP_TITLE}`

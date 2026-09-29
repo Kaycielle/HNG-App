@@ -80,6 +80,10 @@
   min-width: 0;
 }
 
+.dashboard-timer .timer-controls {
+  flex-wrap: wrap;
+}
+
 .dashboard-timer-task {
   font-size: 0.9rem;
   overflow-wrap: anywhere;

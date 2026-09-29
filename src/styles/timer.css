@@ -17,7 +17,8 @@
 }
 
 .timer-ring-small {
-  width: 132px;
+  width: 144px;
+  flex-shrink: 0;
 }
 
 .timer-ring svg {
@@ -61,7 +62,7 @@
 }
 
 .timer-ring-small .timer-time {
-  font-size: 1.6rem;
+  font-size: 1.45rem;
 }
 
 .timer-status {
@@ -76,7 +77,7 @@
 }
 
 .timer-ring-small .timer-status {
-  font-size: 0.68rem;
+  font-size: 0.62rem;
 }
 
 .timer-status-dot {
@@ -144,7 +145,7 @@
 }
 
 .timer-main-btn.btn-sm {
-  min-width: 5.5rem;
+  min-width: 4.5rem;
 }
 
 /* ---------- Settings ---------- */

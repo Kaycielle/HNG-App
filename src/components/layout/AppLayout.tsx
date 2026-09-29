@@ -20,7 +20,15 @@ type AppLayoutProps = {
 export function AppLayout({ route, timerBadge, children }: AppLayoutProps) {
   return (
     <div className="app-shell">
-      <a className="skip-link" href="#main-content">
+      <a
+        className="skip-link"
+        href="#main-content"
+        onClick={(event) => {
+          // Move focus without changing the URL: the part after # is used for page navigation.
+          event.preventDefault()
+          document.getElementById('main-content')?.focus()
+        }}
+      >
         Skip to content
       </a>
 

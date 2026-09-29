@@ -11,7 +11,7 @@
   --color-border-strong: #cfd4da;
   --color-text: #1c2128;
   --color-text-muted: #5b6470;
-  --color-text-subtle: #6b7480;
+  --color-text-subtle: #646d79;
   --color-accent: #2f5bd3;
   --color-accent-hover: #2349b5;
   --color-accent-soft: #eaf0fd;
@@ -56,6 +56,8 @@
 
 body {
   margin: 0;
+  /* Remove the grey flash mobile browsers draw on tap; our own styles show state instead. */
+  -webkit-tap-highlight-color: transparent;
   min-width: 320px;
   background-color: var(--color-bg);
 }
@@ -313,22 +315,10 @@ select {
   font-size: 0.925rem;
 }
 
-.notice-error {
-  background: var(--color-danger-soft);
-  border-color: #f5c2bd;
-  color: var(--color-danger);
-}
-
 .notice-warning {
   background: var(--color-warning-soft);
   border-color: #f3dca6;
   color: var(--color-warning);
-}
-
-.notice-success {
-  background: var(--color-success-soft);
-  border-color: #b9e2cc;
-  color: var(--color-success);
 }
 
 /* ---------- Toast (used across the app) ---------- */
