@@ -7,7 +7,7 @@ is saved in the browser's local storage.
 ## Features
 
 - **Dashboard**: today's tasks, remaining/completed counts, a compact timer, recent notes and a quick "Add task" button.
-- **Tasks**: add, edit, delete (with undo), complete/uncomplete. Optional description, due date and priority. Filters: All, Today, Upcoming, Completed. Reorder by drag-and-drop or with the ↑/↓ buttons.
+- **Tasks**: add, edit, delete (with undo), complete/uncomplete. Optional description, due date, due time and priority. A task turns red as overdue once its due date (or due time today) has passed. Filters: All, Today, Upcoming, Completed. Reorder by drag-and-drop or with the ↑/↓ buttons.
 - **Notes**: create, edit and delete notes (with undo). They save automatically as you type. Search by title or text.
 - **Timer**: 5/15/25/45/60-minute presets or a custom length (1–240 min). Start, pause, resume and reset. You can link it to a task. When time is up you get a banner, a chime and a tab-title alert, plus an optional desktop notification.
 

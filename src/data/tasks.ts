@@ -4,7 +4,7 @@
   just calls these functions.
 */
 
-import { isValidDateKey } from '../lib/dates'
+import { isValidDateKey, isValidTime } from '../lib/dates'
 import { createId } from '../lib/id'
 import { asIsoDate, asString, isRecord, loadList, saveList, storageKey } from '../lib/storage'
 import type { Priority, Task, TaskInput } from '../types'
@@ -26,15 +26,31 @@ export function saveTasks(tasks: Task[]) {
   return saveList(STORE_NAME, tasks, LABEL)
 }
 
-/** Check a task typed in by the user. Returns an error message, or null if it's valid. */
-export function validateTaskInput(input: TaskInput): string | null {
+export type TaskInputError = {
+  /** Which form field the problem is in, so the form can put the cursor there. */
+  field: 'title' | 'description' | 'dueDate' | 'dueTime'
+  message: string
+}
+
+/** Check a task typed in by the user. Returns the first problem found, or null if it's valid. */
+export function validateTaskInput(input: TaskInput): TaskInputError | null {
   const title = input.title.trim()
-  if (!title) return 'Please enter a task title.'
-  if (title.length > TITLE_MAX_LENGTH) return `Keep the title under ${TITLE_MAX_LENGTH} characters.`
-  if (input.description.length > DESCRIPTION_MAX_LENGTH) {
-    return `Keep the description under ${DESCRIPTION_MAX_LENGTH} characters.`
+  if (!title) return { field: 'title', message: 'Please enter a task title.' }
+  if (title.length > TITLE_MAX_LENGTH) {
+    return { field: 'title', message: `Keep the title under ${TITLE_MAX_LENGTH} characters.` }
   }
-  if (input.dueDate !== null && !isValidDateKey(input.dueDate)) return 'Please pick a valid due date.'
+  if (input.description.length > DESCRIPTION_MAX_LENGTH) {
+    return { field: 'description', message: `Keep the description under ${DESCRIPTION_MAX_LENGTH} characters.` }
+  }
+  if (input.dueDate !== null && !isValidDateKey(input.dueDate)) {
+    return { field: 'dueDate', message: 'Please pick a valid due date.' }
+  }
+  if (input.dueTime !== null && !isValidTime(input.dueTime)) {
+    return { field: 'dueTime', message: 'Please pick a valid due time.' }
+  }
+  if (input.dueTime !== null && input.dueDate === null) {
+    return { field: 'dueDate', message: 'Choose a due date to go with the time.' }
+  }
   return null
 }
 
@@ -49,6 +65,7 @@ export function createTask(input: TaskInput): Task {
     updatedAt: now,
     completedAt: null,
     dueDate: input.dueDate,
+    dueTime: input.dueDate ? input.dueTime : null,
     priority: input.priority,
   }
 }
@@ -72,6 +89,8 @@ function sanitizeTask(raw: unknown): Task | null {
     updatedAt: asIsoDate(raw.updatedAt, createdAt),
     completedAt: completed ? asIsoDate(raw.completedAt, createdAt) : null,
     dueDate: isValidDateKey(raw.dueDate) ? raw.dueDate : null,
+    // Tasks saved before due times existed have no dueTime; they simply get null.
+    dueTime: isValidDateKey(raw.dueDate) && isValidTime(raw.dueTime) ? raw.dueTime : null,
     priority: PRIORITIES.includes(raw.priority as Priority) ? (raw.priority as Priority) : null,
   }
 }

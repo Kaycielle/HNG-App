@@ -17,6 +17,8 @@ export type Task = {
   completedAt: string | null
   /** Calendar date without a time, e.g. "2026-09-30". */
   dueDate: string | null
+  /** Optional time of day on the due date, 24-hour "HH:MM" (e.g. "14:30"). Only set when dueDate is set. */
+  dueTime: string | null
   priority: Priority | null
 }
 
@@ -25,6 +27,7 @@ export type TaskInput = {
   title: string
   description: string
   dueDate: string | null
+  dueTime: string | null
   priority: Priority | null
 }
 

@@ -1,6 +1,6 @@
-import { useId, useRef, useState, type FormEvent } from 'react'
-import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH, validateTaskInput } from '../../data/tasks'
-import { describeDueDate, isValidDateKey, todayKey } from '../../lib/dates'
+import { useId, useState, type FormEvent } from 'react'
+import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH, validateTaskInput, type TaskInputError } from '../../data/tasks'
+import { currentTimeKey, describeDueDate, isValidDateKey, todayKey } from '../../lib/dates'
 import type { Priority, TaskInput } from '../../types'
 
 type TaskFormProps = {
@@ -14,20 +14,37 @@ type TaskFormProps = {
   autoFocus?: boolean
 }
 
-const EMPTY: TaskInput = { title: '', description: '', dueDate: null, priority: null }
+const EMPTY: TaskInput = { title: '', description: '', dueDate: null, dueTime: null, priority: null }
 
 export function TaskForm({ initial, defaultDueDate = null, submitLabel, onSubmit, onCancel, autoFocus }: TaskFormProps) {
   const start = initial ?? { ...EMPTY, dueDate: defaultDueDate }
   const [title, setTitle] = useState(start.title)
   const [description, setDescription] = useState(start.description)
   const [dueDate, setDueDate] = useState(start.dueDate ?? '')
+  const [dueTime, setDueTime] = useState(start.dueTime ?? '')
   const [priority, setPriority] = useState<Priority | ''>(start.priority ?? '')
   // Keep the form short: extra fields are hidden unless the task already uses them.
-  const [showDetails, setShowDetails] = useState(Boolean(initial && (initial.description || initial.dueDate || initial.priority)))
-  const [error, setError] = useState<string | null>(null)
-  const titleRef = useRef<HTMLInputElement>(null)
+  const [showDetails, setShowDetails] = useState(Boolean(initial && (initial.description || initial.dueDate || initial.dueTime || initial.priority)))
+  const [error, setError] = useState<TaskInputError | null>(null)
   const id = useId()
   const isEditing = Boolean(initial)
+  const fieldIds = {
+    title: `${id}-title`,
+    description: `${id}-description`,
+    dueDate: `${id}-due`,
+    dueTime: `${id}-time`,
+  }
+  const errorId = `${id}-error`
+
+  /** Put the cursor in a field once React has drawn it (the details panel may have just opened). */
+  function focusField(field: TaskInputError['field']) {
+    requestAnimationFrame(() => document.getElementById(fieldIds[field])?.focus())
+  }
+
+  /** Accessibility attributes that mark a field as the one with the problem. */
+  function invalidProps(field: TaskInputError['field']) {
+    return error?.field === field ? { 'aria-invalid': true, 'aria-describedby': errorId } : {}
+  }
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
@@ -35,12 +52,14 @@ export function TaskForm({ initial, defaultDueDate = null, submitLabel, onSubmit
       title,
       description,
       dueDate: dueDate || null,
+      dueTime: dueTime || null,
       priority: priority || null,
     }
     const problem = validateTaskInput(input)
     if (problem) {
       setError(problem)
-      titleRef.current?.focus()
+      if (problem.field !== 'title') setShowDetails(true)
+      focusField(problem.field)
       return
     }
     onSubmit(input)
@@ -48,11 +67,19 @@ export function TaskForm({ initial, defaultDueDate = null, submitLabel, onSubmit
       // Clear the form for the next task, keeping the chosen due date and details panel.
       setTitle('')
       setDescription('')
+      setDueTime('')
       setPriority('')
       setError(null)
-      titleRef.current?.focus()
+      focusField('title')
     }
   }
+
+  const errorMessage = (field: TaskInputError['field']) =>
+    error?.field === field ? (
+      <p id={errorId} className="field-error" role="alert">
+        {error.message}
+      </p>
+    ) : null
 
   return (
     <form
@@ -68,19 +95,17 @@ export function TaskForm({ initial, defaultDueDate = null, submitLabel, onSubmit
           Task title
         </label>
         <input
-          ref={titleRef}
-          id={`${id}-title`}
+          id={fieldIds.title}
           className="input"
           type="text"
           placeholder="What do you need to do?"
           value={title}
           maxLength={TITLE_MAX_LENGTH}
           autoFocus={autoFocus}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? `${id}-error` : undefined}
+          {...invalidProps('title')}
           onChange={(event) => {
             setTitle(event.target.value)
-            if (error) setError(null)
+            if (error?.field === 'title') setError(null)
           }}
         />
         <button type="submit" className="btn btn-primary">
@@ -88,38 +113,58 @@ export function TaskForm({ initial, defaultDueDate = null, submitLabel, onSubmit
         </button>
       </div>
 
-      {error && (
-        <p id={`${id}-error`} className="field-error" role="alert">
-          {error}
-        </p>
-      )}
+      {errorMessage('title')}
 
       {showDetails ? (
         <div className="task-form-details">
           <div className="field field-wide">
-            <label className="field-label" htmlFor={`${id}-description`}>
+            <label className="field-label" htmlFor={fieldIds.description}>
               Description <span className="optional">(optional)</span>
             </label>
             <textarea
-              id={`${id}-description`}
+              id={fieldIds.description}
               className="textarea"
               rows={2}
               maxLength={DESCRIPTION_MAX_LENGTH}
               value={description}
+              {...invalidProps('description')}
               onChange={(event) => setDescription(event.target.value)}
             />
+            {errorMessage('description')}
           </div>
           <div className="field">
-            <label className="field-label" htmlFor={`${id}-due`}>
+            <label className="field-label" htmlFor={fieldIds.dueDate}>
               Due date <span className="optional">(optional)</span>
             </label>
             <input
-              id={`${id}-due`}
+              id={fieldIds.dueDate}
               className="input"
               type="date"
               value={dueDate}
-              onChange={(event) => setDueDate(event.target.value)}
+              {...invalidProps('dueDate')}
+              onChange={(event) => {
+                setDueDate(event.target.value)
+                if (error?.field === 'dueDate') setError(null)
+              }}
             />
+            {errorMessage('dueDate')}
+          </div>
+          <div className="field">
+            <label className="field-label" htmlFor={fieldIds.dueTime}>
+              Due time <span className="optional">(optional)</span>
+            </label>
+            <input
+              id={fieldIds.dueTime}
+              className="input"
+              type="time"
+              value={dueTime}
+              {...invalidProps('dueTime')}
+              onChange={(event) => {
+                setDueTime(event.target.value)
+                if (error?.field === 'dueTime') setError(null)
+              }}
+            />
+            {errorMessage('dueTime')}
           </div>
           <div className="field">
             <label className="field-label" htmlFor={`${id}-priority`}>
@@ -150,7 +195,9 @@ export function TaskForm({ initial, defaultDueDate = null, submitLabel, onSubmit
           {showDetails ? 'Hide options' : 'More options'}
         </button>
         {!showDetails && dueDate && isValidDateKey(dueDate) && (
-          <span className="task-form-hint">Due: {describeDueDate(dueDate, todayKey()).label}</span>
+          <span className="task-form-hint">
+            Due: {describeDueDate(dueDate, todayKey(), dueTime || null, currentTimeKey()).label}
+          </span>
         )}
         {onCancel && (
           <button type="button" className="btn btn-sm" onClick={onCancel}>

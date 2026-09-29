@@ -35,6 +35,7 @@ export function useTasks() {
                 title: input.title.trim(),
                 description: input.description.trim(),
                 dueDate: input.dueDate,
+                dueTime: input.dueDate ? input.dueTime : null,
                 priority: input.priority,
                 updatedAt: new Date().toISOString(),
               }

@@ -1,4 +1,5 @@
 import { useState, type DragEvent } from 'react'
+import { useCurrentTime } from '../../hooks/useCurrentTime'
 import type { TasksApi } from '../../hooks/useTasks'
 import type { Task } from '../../types'
 import { useToast } from '../ui/toastContext'
@@ -29,6 +30,7 @@ function focusLater(selector: string, fallbackSelector?: string) {
 
 export function TaskList({ tasks, today, api, reorderable = false, onStartTimer, label }: TaskListProps) {
   const showToast = useToast()
+  const nowTime = useCurrentTime()
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draggingId, setDraggingId] = useState<string | null>(null)
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null)
@@ -100,6 +102,7 @@ export function TaskList({ tasks, today, api, reorderable = false, onStartTimer,
             key={task.id}
             task={task}
             today={today}
+            nowTime={nowTime}
             isEditing={editingId === task.id}
             onStartEdit={() => setEditingId(task.id)}
             onFinishEdit={(input) => {

@@ -17,6 +17,8 @@ export type DragProps = {
 type TaskItemProps = {
   task: Task
   today: string
+  /** Current time "HH:MM", to tell whether a task due today is already overdue. */
+  nowTime: string
   isEditing: boolean
   onStartEdit: () => void
   onFinishEdit: (input: TaskInput | null) => void
@@ -38,6 +40,7 @@ type TaskItemProps = {
 export function TaskItem({
   task,
   today,
+  nowTime,
   isEditing,
   onStartEdit,
   onFinishEdit,
@@ -64,6 +67,7 @@ export function TaskItem({
             title: task.title,
             description: task.description,
             dueDate: task.dueDate,
+            dueTime: task.dueTime,
             priority: task.priority,
           }}
           submitLabel="Save"
@@ -75,7 +79,7 @@ export function TaskItem({
     )
   }
 
-  const due = task.dueDate ? describeDueDate(task.dueDate, today) : null
+  const due = task.dueDate ? describeDueDate(task.dueDate, today, task.dueTime, nowTime, !task.completed) : null
 
   return (
     <li className={classes} data-task-id={task.id} {...reorder?.drag}>

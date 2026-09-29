@@ -32,10 +32,48 @@ export function addDays(key: string, days: number): string {
   return toDateKey(date)
 }
 
+/** Is this a valid 24-hour "HH:MM" time, as produced by <input type="time">? */
+export function isValidTime(value: unknown): value is string {
+  return typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value)
+}
+
+/** The current local time as "HH:MM". */
+export function currentTimeKey(): string {
+  const now = new Date()
+  return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+}
+
+/** "14:30" → "2:30 PM" (or "14:30", depending on the user's locale). */
+export function formatTime(time: string): string {
+  const [hours, minutes] = time.split(':').map(Number)
+  return new Date(2000, 0, 1, hours, minutes).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
+}
+
 export type DueTone = 'overdue' | 'today' | 'soon' | 'later'
 
-/** A friendly label for a due date, e.g. "Today", "Tomorrow", "Overdue · Sep 27", "Fri, Oct 3". */
-export function describeDueDate(dueDate: string, today: string): { label: string; tone: DueTone } {
+/**
+ * A friendly label for a due date (and optional time), e.g. "Today", "Tomorrow · 9:00 AM",
+ * "Overdue · Sep 27", "Fri, Oct 3 · 2:30 PM".
+ * `nowTime` ("HH:MM") is used to mark a task due earlier today as overdue.
+ * Pass `markOverdue: false` for finished tasks, which can't be late any more.
+ */
+export function describeDueDate(
+  dueDate: string,
+  today: string,
+  dueTime: string | null = null,
+  nowTime: string | null = null,
+  markOverdue = true,
+): { label: string; tone: DueTone } {
+  const { label, tone } = describeDay(dueDate, today, markOverdue)
+  if (!dueTime) return { label, tone }
+  const withTime = `${label} · ${formatTime(dueTime)}`
+  if (markOverdue && tone === 'today' && nowTime !== null && dueTime < nowTime) {
+    return { label: `Overdue · ${withTime}`, tone: 'overdue' }
+  }
+  return { label: withTime, tone }
+}
+
+function describeDay(dueDate: string, today: string, markOverdue: boolean): { label: string; tone: DueTone } {
   const date = parseDateKey(dueDate)
   const sameYear = dueDate.slice(0, 4) === today.slice(0, 4)
   const formatted = date.toLocaleDateString(undefined, {
@@ -45,7 +83,7 @@ export function describeDueDate(dueDate: string, today: string): { label: string
     year: sameYear ? undefined : 'numeric',
   })
 
-  if (dueDate < today) return { label: `Overdue · ${formatted}`, tone: 'overdue' }
+  if (dueDate < today) return markOverdue ? { label: `Overdue · ${formatted}`, tone: 'overdue' } : { label: formatted, tone: 'later' }
   if (dueDate === today) return { label: 'Today', tone: 'today' }
   if (dueDate === addDays(today, 1)) return { label: 'Tomorrow', tone: 'soon' }
   return { label: formatted, tone: 'later' }
